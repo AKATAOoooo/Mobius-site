@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>你的名字 — 剪辑 / 声音设计</title>
+<meta name="description" content="商业广告、短片与纪录片的剪辑与声音设计。">
+<style>
+  :root{
+    --bg:#08090C;
+    --ink:#F2F4F8;
+    --muted:#8E96A6;
+    --line:rgba(255,255,255,.09);
+    --accent:#E8C36A;      /* 暖金，用来点“年份/客户”这类小字 */
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.65 -apple-system,"SF Pro Text","PingFang SC",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+
+  /* ---------- 顶部：会呼吸的光 ---------- */
+  .stage{position:relative;overflow:hidden;isolation:isolate}
+  .aurora{position:absolute;inset:-20% -10% 0;z-index:-1;filter:blur(80px);opacity:.8}
+  .blob{position:absolute;border-radius:50%;mix-blend-mode:screen;will-change:transform}
+  .b1{width:52vw;height:52vw;left:-8vw;top:-12vw;
+      background:radial-gradient(circle at 30% 30%, #2E6FA8, transparent 68%);
+      animation:drift1 34s ease-in-out infinite alternate}
+  .b2{width:46vw;height:46vw;right:-6vw;top:2vw;
+      background:radial-gradient(circle at 60% 40%, #23707F, transparent 68%);
+      animation:drift2 42s ease-in-out infinite alternate}
+  .b3{width:40vw;height:40vw;left:22vw;top:24vw;
+      background:radial-gradient(circle at 50% 50%, #2A7A66, transparent 70%);
+      animation:drift3 38s ease-in-out infinite alternate}
+  @keyframes drift1{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(6vw,4vw,0) scale(1.15)}}
+  @keyframes drift2{from{transform:translate3d(0,0,0) scale(1.05)}to{transform:translate3d(-5vw,6vw,0) scale(.92)}}
+  @keyframes drift3{from{transform:translate3d(0,0,0) scale(.95)}to{transform:translate3d(4vw,-5vw,0) scale(1.12)}}
+  /* 细颗粒：SVG 噪点，静态，不耗电 */
+  /* 底部渐隐：让光在首屏结束处融进黑底，不出现一刀切的分界 */
+  .stage::after{content:"";position:absolute;left:0;right:0;bottom:0;height:200px;
+    background:linear-gradient(to bottom, rgba(8,9,12,0), var(--bg));pointer-events:none;z-index:0}
+  .grain{position:absolute;inset:0;z-index:-1;opacity:.16;pointer-events:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");
+  }
+  @media (prefers-reduced-motion: reduce){
+    .blob{animation:none}
+  }
+
+  /* ---------- 导航 ---------- */
+  .nav{display:flex;justify-content:space-between;align-items:center;padding:28px 0}
+  .nav .who{font-weight:600;letter-spacing:.02em}
+  .nav nav{display:flex;gap:24px;color:var(--muted);font-size:14px}
+  .nav nav a{padding:12px 8px;margin:-12px -8px}
+  .nav nav a:hover{color:var(--ink)}
+
+  /* ---------- 首屏 ---------- */
+  .hero{padding:96px 0 112px;max-width:820px}
+  .eyebrow{font-size:13px;letter-spacing:.16em;color:var(--accent);text-transform:uppercase;margin-bottom:24px}
+  h1{font-size:64px;line-height:1.08;letter-spacing:-.03em;margin:0 0 24px;font-weight:600}
+  .lede{font-size:18px;line-height:1.75;color:var(--muted);margin:0 0 40px;max-width:56ch}
+  .contact{display:flex;gap:24px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+  .contact a{border-bottom:1px solid var(--line);padding-bottom:2px}
+  .contact a:hover{color:var(--ink);border-color:var(--muted)}
+
+  /* ---------- 作品 ---------- */
+  section{padding:8px 0 96px}
+  .sec-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:32px;border-top:1px solid var(--line);padding-top:32px}
+  h2{font-size:24px;letter-spacing:-.01em;margin:0;font-weight:600}
+  .sec-head span{font-size:13px;color:var(--muted)}
+
+  .works{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:56px 32px}
+  .work{display:block}
+  .cover{position:relative;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;background:#11141A}
+  .cover::after{content:"";position:absolute;inset:0;background:inherit;filter:saturate(1.05);transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+  .work:hover .cover::after{transform:scale(1.045)}
+  .cover .tag{position:absolute;left:16px;bottom:16px;z-index:2;font-size:13px;letter-spacing:.08em;color:rgba(255,255,255,.82);text-transform:uppercase}
+  .c1{background:linear-gradient(140deg,#1B3350,#0E1A28 55%,#2A4B63)}
+  .c2{background:linear-gradient(140deg,#4A2F2A,#23160F 55%,#6B4A33)}
+  .c3{background:linear-gradient(140deg,#1E3D3A,#0C1F1D 55%,#2F635B)}
+  .c4{background:linear-gradient(140deg,#45262A,#1B1012 55%,#6E3A32)}
+  .c5{background:linear-gradient(140deg,#2A2F3A,#12151B 55%,#464E60)}
+  .c6{background:linear-gradient(140deg,#443B22,#1D180D 55%,#6E5D34)}
+  .work h3{font-size:18px;margin:20px 0 8px;font-weight:600;letter-spacing:-.01em}
+  .work p{margin:0;font-size:14px;color:var(--muted)}
+  .work p em{font-style:normal;color:var(--accent)}
+
+
+  /* ---------- 连续片段条（Flex Carousel 的纯 CSS 等价物） ---------- */
+  .strip{position:relative;overflow:hidden;padding:40px 0;
+    mask-image:linear-gradient(90deg,transparent 0,#000 10%,#000 90%,transparent 100%);
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 10%,#000 90%,transparent 100%)}
+  .strip-track{display:flex;gap:24px;width:max-content;animation:marquee 46s linear infinite;will-change:transform}
+  .strip:hover .strip-track{animation-play-state:paused}
+  /* 两端“液体玻璃”：原版 Flex Carousel 的招牌效果 */
+  .strip::before,.strip::after{content:"";position:absolute;top:0;bottom:0;width:140px;z-index:2;pointer-events:none;
+    -webkit-backdrop-filter:blur(16px) saturate(130%);backdrop-filter:blur(16px) saturate(130%)}
+  .strip::before{left:0;-webkit-mask-image:linear-gradient(90deg,#000 30%,transparent);mask-image:linear-gradient(90deg,#000 30%,transparent)}
+  .strip::after{right:0;-webkit-mask-image:linear-gradient(270deg,#000 30%,transparent);mask-image:linear-gradient(270deg,#000 30%,transparent)}
+  @keyframes marquee{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+  .strip-item{width:340px;flex:none;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+  .strip-item .cover{aspect-ratio:16/9;border-radius:0}
+  .strip-item .cap{padding:12px 16px;font-size:13px;color:var(--muted);background:rgba(255,255,255,.02)}
+  .strip-item .cap b{display:block;color:var(--ink);font-weight:600;font-size:14px;margin-bottom:2px}
+  @media (prefers-reduced-motion: reduce){.strip-track{animation:none}}
+
+  /* ---------- 关于 ---------- */
+  .about{max-width:720px}
+  .about p{color:var(--muted);margin:0 0 16px;font-size:16px;line-height:1.75}
+  .about p b{color:var(--ink);font-weight:600}
+
+  footer{border-top:1px solid var(--line);padding:40px 0 64px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:13px}
+
+  @media (max-width:860px){
+    h1{font-size:40px}
+    .hero{padding:64px 0 72px}
+    .works{grid-template-columns:1fr;gap:40px}
+    section{padding-bottom:64px}
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+  <div class="grain"></div>
+
+  <div class="wrap">
+    <header class="nav">
+      <div class="who">你的名字</div>
+      <nav>
+        <a href="#works">作品</a>
+        <a href="#about">关于</a>
+        <a href="#contact">联系</a>
+      </nav>
+    </header>
+
+    <div class="hero">
+      <div class="eyebrow">剪辑 · 声音设计 · 上海</div>
+      <h1>把画面剪成一个说法，<br>再给它配上声音。</h1>
+      <p class="lede">
+        商业广告、品牌片、纪录短片。做剪辑，也做声音——从粗剪到混音一个人走完，
+        省掉来回对齐的时间。
+      </p>
+      <div class="contact" id="contact">
+        <a href="mailto:you@example.com">you@example.com</a>
+        <a href="https://www.xinpianchang.com/u000000" target="_blank" rel="noopener noreferrer">新片场主页</a>
+        <a href="https://space.bilibili.com/" target="_blank" rel="noopener noreferrer">B 站</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <section id="works">
+    <div class="sec-head">
+      <h2>作品</h2>
+      <span>2023 — 2026</span>
+    </div>
+    <div class="works">
+      <a class="work" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer">
+        <div class="cover c1"><div class="tag">Brand film</div></div>
+        <h3>品牌片 · 客户名</h3>
+        <p>剪辑 / 声音 · <em>2026</em></p>
+      </a>
+      <a class="work" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer">
+        <div class="cover c2"><div class="tag">Commercial</div></div>
+        <h3>产品广告 · 客户名</h3>
+        <p>剪辑 · <em>2025</em></p>
+      </a>
+      <a class="work" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer">
+        <div class="cover c3"><div class="tag">Documentary</div></div>
+        <h3>纪录短片 · 片名</h3>
+        <p>剪辑 / 混音 · <em>2025</em></p>
+      </a>
+      <a class="work" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer">
+        <div class="cover c4"><div class="tag">AI Motion</div></div>
+        <h3>AI 影像 · 项目名</h3>
+        <p>剪辑 / 声音设计 · <em>2025</em></p>
+      </a>
+      <a class="work" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer">
+        <div class="cover c5"><div class="tag">Series</div></div>
+        <h3>系列短片 · 客户名</h3>
+        <p>剪辑 · <em>2024</em></p>
+      </a>
+      <a class="work" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer">
+        <div class="cover c6"><div class="tag">Music video</div></div>
+        <h3>MV · 艺人名</h3>
+        <p>剪辑 / 混音 · <em>2023</em></p>
+      </a>
+    </div>
+  </section>
+
+
+  <section>
+    <div class="sec-head"><h2>更多片段</h2><span>鼠标移上去会停</span></div>
+  </section>
+</div>
+
+<div class="strip">
+  <div class="strip-track"><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c1"></div><div class="cap"><b>片段 01</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c2"></div><div class="cap"><b>片段 02</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c3"></div><div class="cap"><b>片段 03</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c4"></div><div class="cap"><b>片段 04</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c5"></div><div class="cap"><b>片段 05</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c6"></div><div class="cap"><b>片段 06</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c1"></div><div class="cap"><b>片段 01</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c2"></div><div class="cap"><b>片段 02</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c3"></div><div class="cap"><b>片段 03</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c4"></div><div class="cap"><b>片段 04</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c5"></div><div class="cap"><b>片段 05</b>客户 · 年份</div></a><a class="strip-item" href="https://www.xinpianchang.com/" target="_blank" rel="noopener noreferrer"><div class="cover c6"></div><div class="cap"><b>片段 06</b>客户 · 年份</div></a></div>
+</div>
+
+<div class="wrap">
+  <section id="about">
+    <div class="sec-head"><h2>关于</h2><span>一句话就够</span></div>
+    <div class="about">
+      <p><b>做剪辑，也做声音。</b>商业广告和品牌片为主，偶尔接纪录短片。习惯从脚本阶段就跟进，剪的时候就知道声音要怎么长。</p>
+      <p>工具：Final Cut Pro、Premiere Pro、Pro Tools。交付标准：调色前锁剪、混音前锁画。</p>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:16px;padding:0">
+    <span>© 2026 你的名字</span>
+    <span>本站无追踪 · 视频在新片场播放</span>
+  </div>
+</footer>
+
+</body>
+</html>
