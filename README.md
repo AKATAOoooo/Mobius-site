@@ -1,69 +1,35 @@
-# Möbius 下载页
+# Möbius
 
-一个纯静态页（单文件 HTML + 图标），给 GitHub Pages 用。
-不需要构建工具、不需要 npm，改完直接推。
+**FCP ⇄ Premiere 时间线互转**（macOS）
 
-## 文件
+把 Final Cut Pro 的时间线转成 Premiere 能直接导入的 XML，也能反向把 Premiere 的 XML 转回 FCPXML。
+多轨、转场、变速、字幕、媒体打包都在本地完成——不联网、不上传、不改源素材。
 
-- `index.html` —— 页面（内联 CSS，无 JS 依赖）
-- `assets/icon.png` —— App 图标（512×512，从 AppIcon.icns 导出）
-- `README.md` —— 本文件
+## 下载
 
-## 发布到 GitHub Pages（一次性设置）
+**https://akataooooo.github.io/Mobius-site/**
 
-### 1. 建仓库
+或直接下最新版：
+[Mobius-latest.dmg](https://github.com/AKATAOoooo/Mobius-site/releases/latest/download/Mobius-latest.dmg)
 
-在 GitHub 新建 **公开** 仓库，名字建议 `mobius-site`，**不要**勾 README / .gitignore。
+## 系统要求
 
-### 2. 推文件
+- Apple 芯片的 Mac（M1 / M2 / M3 / M4），暂不支持 Intel
+- macOS 13.0 或更新
 
-```bash
-cd ~/AI应用/Mobius下载页
-git init -b main
-git add -A && git commit -m "init: 下载页"
-git remote add origin git@github.com:<你的用户名>/mobius-site.git
-git push -u origin main
-```
+## 安装
 
-### 3. 传安装包（Releases）
+1. 打开 DMG，把 Möbius 拖进「应用程序」
+2. **第一次右键 → 打开 → 再点「打开」**（没有 Apple 开发者签名，系统会拦一次）
+3. 之后双击就能正常打开
 
-仓库页 → **Releases** → **Draft a new release**：
+## 说明
 
-- Tag：`v1.16.5`
-- 标题：`Möbius 1.16.5`
-- 附件：把 `Mobius-1.16.5.dmg` **改名成 `Mobius-latest.dmg`** 再拖进去
-  （页面上的下载按钮固定指向这个名字，以后换版本也只需替换同名附件）
-- 发布
+- 全部转换在本机完成，不联网、不上传素材
+- 转换结束会自检「同轨重叠 / 变速越界」，有问题直接列出片段和时间码
+- 倒放片段：画面区间与速度会自动还原，**方向需导入后在 Premiere 里手动勾选「倒放速度」**
 
-### 4. 开 Pages
+---
 
-仓库 → **Settings** → **Pages**：
+本仓库只托管下载页与安装包；转换器的源码不公开。
 
-- Source：`Deploy from a branch`
-- Branch：`main` / `/ (root)`
-- Save
-
-一两分钟后访问 `https://<你的用户名>.github.io/mobius-site/`。
-
-## 以后更新版本
-
-1. 改 `index.html` 里的三处版本信息（搜索 `v1.16.5`，约 2 处 + meta 里的 38 MB）；
-2. 新建一个 Release，附件仍然叫 `Mobius-latest.dmg`；
-3. 页面上的「下载 macOS 版」会自动指向最新 Release（因为用的是 `releases/latest/download/Mobius-latest.dmg`）。
-
-## 换仓库名要改哪里
-
-页面里有 3 处链接写死了 `AKATAOoooo/mobius-site`：
-
-```bash
-grep -n "mobius-site" index.html
-```
-
-改完再推即可。
-
-## 本地预览
-
-```bash
-cd ~/AI应用/Mobius下载页 && python3 -m http.server 8000
-# 打开 http://127.0.0.1:8000/
-```
