@@ -302,6 +302,9 @@
   });
   layout();
 
+  // 支持 ?works=1 直接打开作品（方便分享某个状态，也方便截图）
+  if (location.search.includes('works=1')) openWorks();
+
   // 背景视频加载失败时保留 CSS 渐变兜底
   const v = document.getElementById('bgvideo');
   v.addEventListener('error', () => { v.style.display = 'none'; });
