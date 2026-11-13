@@ -78,6 +78,12 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.m
 const bar = document.getElementById('bar');
 const num = document.getElementById('num');
 const splash = document.getElementById('splash');
+// ?skip=1 直接跳过入场（截图/分享直达用）
+if (location.search.includes('skip=1')) {
+  bar.style.width = '100%';
+  num.textContent = '100';
+  splash.classList.add('done');
+}
 let p = 0;
 const tick = setInterval(() => {
   p = Math.min(100, p + Math.random() * 9 + 4);
