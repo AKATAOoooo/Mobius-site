@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>你的名字 — 作品集</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://db.onlinewebfonts.com/c/d08bafd725a4cfc309efb5a88e0b63a5?family=basis33" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#05060A;color:#fff;overflow:hidden}
+  body{font-family:'Inter',"PingFang SC",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .pixel{font-family:'basis33',monospace;letter-spacing:.06em}
+
+  /* ---------- 入场 ---------- */
+  #splash{position:fixed;inset:0;z-index:100;background:#05060A;display:grid;place-items:center;
+    transition:transform 1s cubic-bezier(.76,0,.24,1),opacity .8s ease}
+  #splash.done{transform:translateY(-100%);opacity:0;pointer-events:none}
+  .splash-inner{display:flex;flex-direction:column;align-items:center;gap:18px}
+  .splash-name{font-size:26px;letter-spacing:.14em;font-weight:400}
+  .splash-role{font-size:12px;letter-spacing:.3em;color:rgba(255,255,255,.45)}
+  .bar{width:180px;height:1px;background:rgba(255,255,255,.16);margin-top:10px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:#fff;transition:width .1s linear}
+  .num{font-size:11px;color:rgba(255,255,255,.4);margin-top:10px;font-variant-numeric:tabular-nums}
+
+  /* ---------- 场景 ---------- */
+  canvas{display:block;position:fixed;inset:0}
+  .ui{position:fixed;inset:0;z-index:10;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:24px 28px}
+  @media (min-width:768px){.ui{padding:32px 44px}}
+  .top{display:flex;justify-content:space-between;align-items:flex-start}
+  .brand{font-size:14px;letter-spacing:.12em}
+  .brand small{display:block;font-family:'basis33',monospace;font-size:11px;color:rgba(255,255,255,.45);margin-top:4px;letter-spacing:.1em}
+  .nav{display:flex;gap:26px;font-size:13px;color:rgba(255,255,255,.75);pointer-events:auto}
+  .nav a{color:inherit;text-decoration:none;transition:opacity .2s}
+  .nav a:hover{opacity:.6}
+  .bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+  .cap{font-size:14px;letter-spacing:.02em;opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s}
+  .cap.show{opacity:1;transform:none}
+  .cap b{display:block;font-weight:500;margin-bottom:2px}
+  .cap span{font-size:12px;color:rgba(255,255,255,.5)}
+  .hint{font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.35);text-transform:uppercase}
+
+  @media (prefers-reduced-motion: reduce){
+    #splash{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-name">你的名字</div>
+    <div class="splash-role pixel">EDITOR / SOUND</div>
+    <div class="bar"><i id="bar"></i></div>
+    <div class="num" id="num">0</div>
+  </div>
+</div>
+
+<canvas id="c"></canvas>
+
+<div class="ui">
+  <div class="top">
+    <div class="brand">你的名字<small class="pixel">SELECTED WORK</small></div>
+    <nav class="nav">
+      <a href="#">作品</a><a href="#">关于</a><a href="#">联系</a>
+    </nav>
+  </div>
+  <div class="bottom">
+    <div class="cap" id="cap"><b>—</b><span>—</span></div>
+    <div class="hint">滚动 / 拖拽 旋转</div>
+  </div>
+</div>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+/* ---------- 入场：0 → 100，然后幕布上移 ---------- */
+const bar = document.getElementById('bar');
+const num = document.getElementById('num');
+const splash = document.getElementById('splash');
+let p = 0;
+const tick = setInterval(() => {
+  p = Math.min(100, p + Math.random() * 9 + 4);
+  bar.style.width = p + '%';
+  num.textContent = String(Math.round(p)).padStart(3, '0');
+  if (p >= 100) {
+    clearInterval(tick);
+    setTimeout(() => splash.classList.add('done'), 260);
+  }
+}, 90);
+
+/* ---------- 场景 ---------- */
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x05060A, 0.055);
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0, 10);
+
+/* 用 canvas 生成占位封面（换成真实图片时把 texture 换掉即可） */
+function makeTexture(i) {
+  const cv = document.createElement('canvas');
+  cv.width = 640; cv.height = 360;
+  const g = cv.getContext('2d');
+  const hues = [[27,45,63],[74,47,42],[30,61,58],[69,38,42],[42,47,58],[68,59,34]];
+  const [r, gr, b] = hues[i % hues.length];
+  const grad = g.createLinearGradient(0, 0, 640, 360);
+  grad.addColorStop(0, 'rgb(' + (r + 18) + ',' + (gr + 18) + ',' + (b + 22) + ')');
+  grad.addColorStop(0.55, 'rgb(' + r + ',' + gr + ',' + b + ')');
+  grad.addColorStop(1, 'rgb(' + Math.max(0, r - 14) + ',' + Math.max(0, gr - 14) + ',' + Math.max(0, b - 8) + ')');
+  g.fillStyle = grad; g.fillRect(0, 0, 640, 360);
+  g.fillStyle = 'rgba(255,255,255,.55)';
+  g.font = '500 20px Inter, sans-serif';
+  g.fillText('WORK ' + String(i + 1).padStart(2, '0'), 26, 330);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+const WORKS = [
+  { title: '品牌片', client: '客户 A', year: 2026 },
+  { title: '产品广告', client: '客户 B', year: 2025 },
+  { title: '纪录短片', client: '客户 C', year: 2025 },
+  { title: 'AI 影像', client: '项目 D', year: 2025 },
+  { title: '系列短片', client: '客户 E', year: 2024 },
+  { title: 'MV', client: '艺人 F', year: 2023 },
+  { title: '品牌片 II', client: '客户 G', year: 2023 },
+  { title: '短片', client: '客户 H', year: 2022 },
+];
+
+const group = new THREE.Group();
+scene.add(group);
+
+const COUNT = WORKS.length;
+const RADIUS = 3.1;
+const RISE = 1.0;
+const planes = [];
+
+for (let i = 0; i < COUNT; i++) {
+  const angle = (i / COUNT) * Math.PI * 2 * 1.6;
+  const y = (i - COUNT / 2) * RISE;
+  const geo = new THREE.PlaneGeometry(2.6, 1.46);
+  const mat = new THREE.MeshBasicMaterial({ map: makeTexture(i), transparent: true, opacity: 0.95 });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(Math.sin(angle) * RADIUS, y, Math.cos(angle) * RADIUS);
+  mesh.rotation.y = angle;
+  mesh.userData = { angle, baseY: y, index: i };
+  group.add(mesh);
+  planes.push(mesh);
+}
+
+/* ---------- 交互：滚动/拖拽给角速度 ---------- */
+let velocity = 0.0026;
+let drag = false, lastX = 0, dragV = 0;
+
+addEventListener('wheel', (e) => {
+  velocity += e.deltaY * 0.00004;
+}, { passive: true });
+
+canvas.addEventListener('pointerdown', (e) => { drag = true; lastX = e.clientX; canvas.setPointerCapture(e.pointerId); });
+canvas.addEventListener('pointermove', (e) => {
+  if (!drag) return;
+  const dx = e.clientX - lastX;
+  lastX = e.clientX;
+  dragV = dx * 0.0016;
+  group.rotation.y += dragV;
+});
+canvas.addEventListener('pointerup', () => { drag = false; velocity += dragV; dragV = 0; });
+canvas.addEventListener('pointercancel', () => { drag = false; });
+
+const capEl = document.getElementById('cap');
+let currentIndex = -1;
+
+function updateCaption() {
+  // 找出最“正面”的一张
+  let best = 0, bestZ = -Infinity;
+  const m = new THREE.Matrix4();
+  for (let i = 0; i < planes.length; i++) {
+    m.copy(planes[i].matrixWorld);
+    const z = m.elements[14];
+    if (z > bestZ) { bestZ = z; best = i; }
+  }
+  if (best !== currentIndex) {
+    currentIndex = best;
+    const w = WORKS[best];
+    capEl.classList.remove('show');
+    setTimeout(() => {
+      capEl.innerHTML = '<b>👁 ' + w.title + '</b><span>' + w.client + ' · ' + w.year + '</span>';
+      capEl.classList.add('show');
+    }, 120);
+  }
+}
+
+/* ---------- 渲染 ---------- */
+const clock = new THREE.Clock();
+function animate() {
+  const t = clock.getElapsedTime();
+  if (!drag) group.rotation.y += velocity;
+  velocity *= 0.985;
+
+  // 呼吸感 + 近大远小
+  for (const p of planes) {
+    const s = 1 + Math.sin(t * 0.9 + p.userData.index) * 0.012;
+    p.scale.setScalar(s);
+  }
+  group.position.y = Math.sin(t * 0.35) * 0.12;
+
+  renderer.render(scene, camera);
+  group.updateMatrixWorld();
+  updateCaption();
+  requestAnimationFrame(animate);
+}
+animate();
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>
