@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>你的名字 — 剪辑 / 声音设计</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://db.onlinewebfonts.com/c/d08bafd725a4cfc309efb5a88e0b63a5?family=basis33" rel="stylesheet">
+<style>
+  :root{
+    --ink:#fff;
+    --muted-90:rgba(255,255,255,.9);
+    --muted-60:rgba(255,255,255,.6);
+    --muted-50:rgba(255,255,255,.5);
+    --line:rgba(255,255,255,.3);
+    --accent:#ef4444;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:'Inter',"PingFang SC",system-ui,sans-serif;
+    background:#000;color:var(--ink);
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    overflow:hidden;
+  }
+  .font-pixel{font-family:'basis33',monospace;letter-spacing:.02em}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- 背景视频 ---------- */
+  .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .bg-fallback{position:absolute;inset:0;z-index:0;
+    background:radial-gradient(1200px 700px at 20% 10%,#12324A 0,transparent 60%),
+               radial-gradient(900px 600px at 85% 20%,#0E2B2A 0,transparent 55%),
+               #05070B}
+  .grain{position:absolute;inset:0;z-index:1;opacity:.12;pointer-events:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.55'/></svg>")}
+  @media (min-width:1024px){.bg{transform:scale(1.2)}}
+
+  /* ---------- 内容层 ---------- */
+  .content{position:relative;z-index:10;display:flex;height:100%;flex-direction:column;
+    padding:0 20px}
+  @media (min-width:640px){.content{padding:0 24px}}
+  @media (min-width:768px){.content{padding:0 40px}}
+  @media (min-width:1024px){.content{padding:0 56px}}
+
+  /* 导航 */
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo .mark{font-family:'basis33',monospace;font-size:13px;line-height:1;letter-spacing:.08em}
+  .nav-links{display:none;gap:32px;font-size:14px;letter-spacing:.04em}
+  .nav-links a{transition:opacity .2s}
+  .nav-links a:hover{opacity:.7}
+  @media (min-width:768px){.nav-links{display:flex}}
+  .burger{display:grid;place-items:center;width:40px;height:40px;background:none;border:0;color:#fff;cursor:pointer}
+  @media (min-width:768px){.burger{display:none}}
+
+  /* 四栏信息 */
+  .meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+  @media (min-width:640px){.meta{gap:24px}}
+  @media (min-width:1024px){.meta{grid-template-columns:repeat(4,minmax(0,1fr));gap:32px}}
+  .meta h2{margin:0;font-size:18px;font-weight:400;letter-spacing:.04em;line-height:1.15}
+  @media (min-width:768px){.meta h2{font-size:20px}}
+  .meta h2 .px{display:block;font-family:'basis33',monospace;font-size:24px;margin-top:2px}
+  @media (min-width:768px){.meta h2 .px{font-size:30px}}
+  .meta .ast{margin-top:12px;font-size:10px;color:var(--muted-50)}
+  .blurb{margin-top:4px;font-family:'basis33',monospace;font-size:12px;line-height:1.5;color:var(--muted-60);white-space:pre-line}
+  .label{font-family:'basis33',monospace;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-50);margin-bottom:12px}
+  .meta p.body,.meta ul{margin:0;font-size:14px;color:var(--muted-90);line-height:1.6}
+  .meta ul{padding:0;list-style:none}
+  .meta ul li{line-height:1.7}
+  .col2{text-align:right}
+  .col4{text-align:right}
+  @media (min-width:1024px){.col2,.col4{text-align:left}}
+  .spacer{flex:1}
+
+  /* 底部 */
+  .bottom{padding-bottom:16px}
+  .rowA{display:grid;grid-template-columns:1fr;gap:16px;align-items:end}
+  @media (min-width:1024px){.rowA{grid-template-columns:1fr 1fr;gap:24px}}
+  h1{margin:0;font-size:30px;font-weight:400;letter-spacing:.06em;text-transform:uppercase;line-height:.92}
+  @media (min-width:640px){h1{font-size:36px}}
+  @media (min-width:768px){h1{font-size:48px}}
+  @media (min-width:1024px){h1{font-size:60px;line-height:.86}}
+  @media (min-width:1280px){h1{font-size:68px}}
+  h1 .dim{color:rgba(255,255,255,.55)}
+  .right{display:flex;flex-direction:column;gap:16px;justify-content:flex-end}
+  @media (min-width:640px){.right{gap:24px}}
+
+  .showreel{display:inline-flex;align-items:center;gap:12px;align-self:flex-start;
+    border:1px solid var(--line);background:rgba(255,255,255,.05);backdrop-filter:blur(4px);
+    padding:12px 24px;color:#fff;font-size:14px;letter-spacing:.1em;cursor:pointer;
+    transition:background .2s;font-family:inherit}
+  .showreel:hover{background:rgba(255,255,255,.1)}
+  .showreel svg{fill:#fff}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;font-size:14px;color:rgba(255,255,255,.8)}
+  .chip{display:flex;align-items:center;gap:8px;background:#0B0B0B;padding:8px 12px}
+  .chip b{font-weight:700;font-size:14px}
+  .chip i{font-style:normal;color:var(--muted-50);font-size:11px}
+
+  .rowB{margin-top:16px;display:grid;grid-template-columns:1fr;gap:8px;padding-top:16px;font-size:12px;color:var(--muted-60)}
+  @media (min-width:640px){.rowB{grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}}
+  .rowB .right2{text-align:left}
+  @media (min-width:640px){.rowB .right2{text-align:right}}
+  .rowB a{color:var(--accent);transition:color .2s}
+  .rowB a:hover{color:#f87171}
+
+  /* ---------- 作品浮层（轮播） ---------- */
+  .works{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.96);backdrop-filter:blur(12px);
+    display:flex;flex-direction:column;opacity:0;pointer-events:none;
+    transition:opacity .5s cubic-bezier(.16,1,.3,1)}
+  .works.open{opacity:1;pointer-events:auto}
+  .works header{display:flex;align-items:center;justify-content:space-between;padding:24px 24px 0}
+  .works header .t{font-family:'basis33',monospace;font-size:15px;letter-spacing:.14em;color:var(--muted-60)}
+  .works .close{background:none;border:0;color:#fff;cursor:pointer;padding:8px;transition:opacity .2s}
+  .works .close:hover{opacity:.7}
+  .stage-wrap{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:24px}
+  .stage{position:relative;width:100%;height:min(56vh,520px);perspective:1400px}
+  .card{position:absolute;left:50%;top:50%;width:min(46vw,520px);aspect-ratio:16/9;
+    border-radius:6px;overflow:hidden;transform-origin:center;
+    transition:transform .55s cubic-bezier(.16,1,.3,1),opacity .4s;background:#111}
+  .card .fill{position:absolute;inset:0}
+  .card .cap-in{position:absolute;left:14px;bottom:12px;font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.85);text-transform:uppercase}
+  .w1{background:linear-gradient(140deg,#1B3350,#0E1A28 55%,#2A4B63)}
+  .w2{background:linear-gradient(140deg,#4A2F2A,#23160F 55%,#6B4A33)}
+  .w3{background:linear-gradient(140deg,#1E3D3A,#0C1F1D 55%,#2F635B)}
+  .w4{background:linear-gradient(140deg,#45262A,#1B1012 55%,#6E3A32)}
+  .w5{background:linear-gradient(140deg,#2A2F3A,#12151B 55%,#464E60)}
+  .w6{background:linear-gradient(140deg,#443B22,#1D180D 55%,#6E5D34)}
+  .caption{font-size:14px;color:var(--muted-90);letter-spacing:.02em;min-height:20px}
+  .caption b{font-weight:600}
+  .caption span{color:var(--muted-50);font-size:12px;margin-left:10px}
+  .arrows{display:flex;gap:16px}
+  .arrow{width:44px;height:44px;border-radius:999px;border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.04);color:#fff;cursor:pointer;display:grid;place-items:center;
+    transition:background .2s,border-color .2s;font-size:18px}
+  .arrow:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.4)}
+
+  @media (prefers-reduced-motion: reduce){
+    .works,.card{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-fallback"></div>
+<video class="bg" id="bgvideo" autoplay muted loop playsinline
+       poster="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+  <source src="https://motionsites.org/assets/prompt-media/ee7db009d23a8a633a63.mp4" type="video/mp4">
+</video>
+<div class="grain"></div>
+
+<div class="content">
+
+  <!-- 1. 导航 -->
+  <header class="nav">
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 256 256" fill="none">
+        <path d="M 160 88 L 194 34 L 216 0 L 256 0 L 256 40 L 221.5 93.5 L 200 128 L 256 128 L 256 256 L 96 256 L 96 168 L 64.246 220 L 40 256 L 0 256 L 0 216 L 34 162 L 56 128 L 0 128 L 0 0 L 160 0 Z" fill="white"/>
+      </svg>
+      <span class="mark font-pixel">YOUR NAME</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#" onclick="return false">关于</a>
+      <a href="#" onclick="openWorks();return false">作品</a>
+      <a href="#" onclick="return false">流程</a>
+      <a href="#" onclick="return false">联系</a>
+    </nav>
+    <button class="burger" aria-label="菜单">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </header>
+
+  <!-- 2. 四栏信息 -->
+  <section class="meta">
+    <div>
+      <h2>你的名字<span class="px">EDITOR</span></h2>
+      <div class="ast">*</div>
+      <div class="blurb">剪辑与声音设计，上海。
+独立接片，也从
+粗剪一直跟到
+混音交付</div>
+    </div>
+    <div class="col2">
+      <h2>剪辑 &amp;<span class="px">SOUND</span></h2>
+    </div>
+    <div>
+      <div class="label font-pixel">What I Do</div>
+      <p class="body" style="max-width:220px">做商业广告、品牌片与纪录短片的剪辑，也做声音——一个人走完，省掉来回对齐的时间。</p>
+    </div>
+    <div class="col4">
+      <div class="label font-pixel">Services</div>
+      <ul>
+        <li>广告片剪辑</li>
+        <li>品牌片 / 纪录剪辑</li>
+        <li>声音设计</li>
+        <li>混音与交付</li>
+        <li>字幕与 XML 交付</li>
+        <li>跨软件时间线转换</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="spacer"></div>
+
+  <!-- 4. 底部 -->
+  <div class="bottom">
+    <div class="rowA">
+      <div>
+        <h1>
+          把画面<br>
+          剪成<span class="dim">一个说法</span><br>
+          再给它<br>
+          <span class="dim">配上声音</span>
+        </h1>
+      </div>
+      <div class="right">
+        <button class="showreel" onclick="openWorks()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          播放 作品集
+        </button>
+        <div class="chips">
+          <span class="chip"><b>广告片</b></span>
+          <span class="chip"><b>品牌片</b></span>
+          <span class="chip"><b>纪录短片</b></span>
+        </div>
+      </div>
+    </div>
+    <div class="rowB">
+      <div>开放合作 · 长期 / 短期均可。<a href="mailto:you@example.com">约个时间</a></div>
+      <div class="right2">6 个作品 · 上海 · 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- 作品浮层 -->
+<div class="works" id="works">
+  <header>
+    <div class="t font-pixel">SELECTED WORK</div>
+    <button class="close" onclick="closeWorks()" aria-label="关闭">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.6"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </header>
+  <div class="stage-wrap">
+    <div class="stage" id="stage"></div>
+    <div class="caption" id="caption"></div>
+    <div class="arrows">
+      <button class="arrow" onclick="move(-1)" aria-label="上一个">‹</button>
+      <button class="arrow" onclick="move(1)" aria-label="下一个">›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 占位作品：换成你的真实作品（封面图 + 标题 + 客户 + 年份 + 新片场链接）
+  const WORKS = [
+    { cls:'w1', title:'品牌片', client:'客户 A', year:2026 },
+    { cls:'w2', title:'产品广告', client:'客户 B', year:2025 },
+    { cls:'w3', title:'纪录短片', client:'客户 C', year:2025 },
+    { cls:'w4', title:'AI 影像', client:'项目 D', year:2025 },
+    { cls:'w5', title:'系列短片', client:'客户 E', year:2024 },
+    { cls:'w6', title:'MV', client:'艺人 F', year:2023 },
+  ];
+  const stage = document.getElementById('stage');
+  const caption = document.getElementById('caption');
+  let index = 0;
+
+  WORKS.forEach((w, i) => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.innerHTML = '<div class="fill ' + w.cls + '"></div><div class="cap-in">' + w.title + '</div>';
+    el.addEventListener('click', () => { index = i; layout(); });
+    stage.appendChild(el);
+  });
+
+  function layout(){
+    const cards = [...stage.children];
+    cards.forEach((el, i) => {
+      const d = i - index;
+      const abs = Math.abs(d);
+      const x = d * 62;                 // 百分比偏移
+      const ry = Math.max(-28, Math.min(28, -d * 16));
+      const sc = Math.max(0.62, 1 - abs * 0.16);
+      const op = abs > 2 ? 0 : Math.max(0.15, 1 - abs * 0.32);
+      el.style.transform = 'translate(-50%,-50%) translateX(' + x + '%) rotateY(' + ry + 'deg) scale(' + sc + ')';
+      el.style.opacity = op;
+      el.style.zIndex = String(100 - abs);
+    });
+    const w = WORKS[index];
+    caption.innerHTML = '<b>' + w.title + '</b><span>' + w.client + ' · ' + w.year + '</span>';
+  }
+  function move(step){ index = Math.max(0, Math.min(WORKS.length - 1, index + step)); layout(); }
+  function openWorks(){ document.getElementById('works').classList.add('open'); layout(); }
+  function closeWorks(){ document.getElementById('works').classList.remove('open'); }
+  document.addEventListener('keydown', (e) => {
+    if (!document.getElementById('works').classList.contains('open')) return;
+    if (e.key === 'Escape') closeWorks();
+    if (e.key === 'ArrowLeft') move(-1);
+    if (e.key === 'ArrowRight') move(1);
+  });
+  layout();
+
+  // 背景视频加载失败时保留 CSS 渐变兜底
+  const v = document.getElementById('bgvideo');
+  v.addEventListener('error', () => { v.style.display = 'none'; });
+</script>
+</body>
+</html>
